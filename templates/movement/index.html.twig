@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des Mouvements{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">📋 Historique des Mouvements</h1>
+
+        <div>
+            {# PDF et Nouveau Mouvement : à partir de SENIOR #}
+            {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER')
+                  or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                <div class="btn-group me-2">
+                    <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown">
+                        📄 Télécharger PDF
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_movement_export_sorties') }}">
+                                📤 Rapport Sorties
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_movement_export_entrees') }}">
+                                📥 Rapport Entrées
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_movement_export_all') }}">
+                                📊 Rapport Complet
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <a href="{{ path('app_movement_new') }}" class="btn btn-success">
+                    ➕ Nouveau Mouvement
+                </a>
+            {% endif %}
+
+            <a href="{{ path('app_dashboard') }}" class="btn btn-secondary ms-2">← Dashboard</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Image</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Produit</th>
+                            <th>Senteur</th>
+                            <th>Quantité</th>
+                            <th>Destination/Provenance</th>
+                            <th>Référence</th>
+                            <th>Utilisateur</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for movement in movements %}
+                        <tr>
+                            <td>
+                                {% if movement.product.image %}
+                                    <img src="{{ asset('images/products/' ~ movement.product.image) }}"
+                                         alt="{{ movement.product.name }}"
+                                         class="product-image">
+                                {% else %}
+                                    <div style="width:50px;height:50px;background:linear-gradient(135deg,#D96C80,#BF2A52);
+                                                border-radius:10px;display:flex;align-items:center;justify-content:center;
+                                                color:white;font-weight:bold;font-size:0.85rem;">
+                                        {{ movement.product.name|slice(0, 2)|upper }}
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ movement.createdAt|date('d/m/Y H:i') }}</td>
+
+                            <td>
+                                {% if movement.type == 'ENTREE' %}
+                                    <span class="badge bg-success">📥 Entrée</span>
+                                {% else %}
+                                    <span class="badge bg-danger">📤 Sortie</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <strong>{{ movement.product.reference }}</strong><br>
+                                <small>{{ movement.product.name }}</small>
+                            </td>
+
+                            <td>
+                                {% if movement.product.scent %}
+                                    <span class="badge bg-secondary">
+                                        {{ movement.product.scent|replace({'-':' '})|title }}
+                                    </span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td><strong>{{ movement.quantity }}</strong></td>
+                            <td>{{ movement.destination ?? '-' }}</td>
+                            <td>{{ movement.reference ?? '-' }}</td>
+                            <td>{{ movement.user.firstName }} {{ movement.user.lastName }}</td>
+                            <td>{{ movement.notes ?? '-' }}</td>
+
+                            <td>
+                                {# Téléchargement PDF seulement pour SENIOR+ #}
+                                {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER')
+                                      or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_movement_export_single', {'id': movement.id}) }}"
+                                       class="btn btn-sm btn-danger"
+                                       title="Télécharger le bon">
+                                        📄 PDF
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="11" class="text-center">
+                                Aucun mouvement enregistré
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

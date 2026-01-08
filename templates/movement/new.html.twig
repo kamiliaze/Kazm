@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Mouvement{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">➕ Nouveau Mouvement de Stock</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_row(form.type) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.product) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.quantity) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.destination) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.reference) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(form.notes) }}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">💾 Enregistrer le mouvement</button>
+                            <a href="{{ path('app_movement_index') }}" class="btn btn-secondary">Annuler</a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">ℹ️ Aide</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Types de mouvements :</h6>
+                    <ul>
+                        <li><strong>📥 Entrée</strong> : Réception de stock (fournisseur, retour...)</li>
+                        <li><strong>📤 Sortie</strong> : Expédition de stock (client, magasin...)</li>
+                    </ul>
+                    
+                    <hr>
+                    
+                    <p><strong>Note :</strong> La quantité en stock sera automatiquement mise à jour.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

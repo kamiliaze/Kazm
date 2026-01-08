@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique du Produit{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">📋 Historique du Produit</h1>
+        <a href="{{ path('app_movement_index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    {% if movements|length > 0 %}
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ movements[0].product.reference }} - {{ movements[0].product.name }}</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Stock actuel :</strong> {{ movements[0].product.quantity }} unités</p>
+                <p><strong>Catégorie :</strong> {{ movements[0].product.category.name }}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Quantité</th>
+                            <th>Destination/Provenance</th>
+                            <th>Référence</th>
+                            <th>Utilisateur</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for movement in movements %}
+                        <tr>
+                            <td>{{ movement.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>
+                                {% if movement.type == 'ENTREE' %}
+                                    <span class="badge bg-success">📥 Entrée</span>
+                                {% else %}
+                                    <span class="badge bg-danger">📤 Sortie</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if movement.type == 'ENTREE' %}
+                                    <span class="text-success">+{{ movement.quantity }}</span>
+                                {% else %}
+                                    <span class="text-danger">-{{ movement.quantity }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ movement.destination ?? '-' }}</td>
+                            <td>{{ movement.reference ?? '-' }}</td>
+                            <td>{{ movement.user.firstName }} {{ movement.user.lastName }}</td>
+                            <td>{{ movement.notes ?? '-' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucun mouvement enregistré pour ce produit</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le produit{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">✏️ Modifier le produit : {{ product.name }}</h1>
+        <a href="{{ path('product_index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card" style="border-radius: 15px; border-left: 5px solid #FF69B4;">
+                <div class="card-body">
+                    {% if product.image %}
+                        <div class="mb-4 text-center">
+                            <h6>Photo actuelle :</h6>
+                            <img src="{{ asset('images/products/' ~ product.image) }}" 
+                                 alt="{{ product.name }}" 
+                                 style="max-height: 300px; border-radius: 10px; object-fit: cover;">
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(form, { 'attr': { 'class': 'form-horizontal', 'enctype': 'multipart/form-data' } }) }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.reference) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.name) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.quantity) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.alertThreshold) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.supplier) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.category) }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form_row(form.scent) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(form.entryDate) }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <p style="font-size: 0.9em; color: #666;">
+                            <strong>Note :</strong> Laissez le champ photo vide pour conserver l'image actuelle.
+                        </p>
+                        {{ form_row(form.image) }}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">✅ Enregistrer les modifications</button>
+                        <a href="{{ path('product_index') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

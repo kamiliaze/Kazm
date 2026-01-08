@@ -1,0 +1,261 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard - Kazm Stock{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📊 Dashboard - Kazm Stock</h1>
+        {% if app.user %}
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <strong>{{ app.user.fullName }}</strong><br>
+                    <small class="text-muted">
+                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                            🔴 Administrateur
+                        {% elseif 'ROLE_DIRECTEUR' in app.user.roles %}
+                            🔴 Directeur
+                        {% elseif 'ROLE_MANAGER' in app.user.roles %}
+                            🟠 Manager
+                        {% elseif 'ROLE_SENIOR' in app.user.roles %}
+                            🟡 Senior
+                        {% else %}
+                            🟢 Junior
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {# MENU #}
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="menu-top d-flex gap-2 flex-wrap">
+                <a href="{{ path('app_dashboard') }}" class="btn-menu btn-dashboard">🏠 DASHBOARD</a>
+
+                {# Tous les rôles voient PRODUITS #}
+                <a href="{{ path('product_index') }}" class="btn-menu btn-produits">📦 PRODUITS</a>
+
+                {# Senior, Manager, Directeur, Admin : NOUVEAU PRODUIT + MOUVEMENTS #}
+                {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER') or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('product_new') }}" class="btn-menu btn-nouveau">➕ NOUVEAU PRODUIT</a>
+                    <a href="{{ path('app_movement_index') }}" class="btn-menu btn-mouvements">📋 MOUVEMENTS</a>
+                {% endif %}
+
+                {# Junior : accès Catégories aussi #}
+                <a href="{{ path('app_category_crud_index') }}" class="btn-menu btn-categories">📂 CATÉGORIES</a>
+
+                {# Manager, Directeur, Admin : menu Utilisateurs #}
+                {% if is_granted('ROLE_MANAGER') or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_user_index') }}" class="btn-menu btn-utilisateurs">👥 UTILISATEURS</a>
+                {% endif %}
+
+                <a href="{{ path('app_logout') }}" class="btn-menu btn-deconnexion">🚪 DÉCONNEXION</a>
+            </div>
+        </div>
+    </div>
+
+    {# Statistiques globales #}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">📦 Total Produits</h5>
+                    <h2>{{ totalProducts }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">📊 Stock Total</h5>
+                    <h2>{{ totalStock }} unités</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Produits en alerte #}
+    <div class="card mb-4 border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4>🚨 Produits en Alerte ({{ alertProducts|length }})</h4>
+        </div>
+        <div class="card-body">
+            {% if alertProducts|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Référence</th>
+                                <th>Nom</th>
+                                <th>Senteur</th>
+                                <th>Quantité</th>
+                                <th>Seuil</th>
+                                <th>Catégorie</th>
+                                {# Bouton Réappro visionner : Senior+, Manager, Directeur, Admin #}
+                                {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER') or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                                    <th>Actions</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in alertProducts %}
+                            <tr class="table-warning">
+                                <td>
+                                    {% if product.image %}
+                                        <img src="{{ asset('images/products/' ~ product.image) }}" 
+                                             alt="{{ product.name }}" 
+                                             class="product-image">
+                                    {% else %}
+                                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #D96C80, #BF2A52); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem;">
+                                            {{ product.name|slice(0, 2)|upper }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ product.reference }}</strong></td>
+                                <td>{{ product.name }}</td>
+                                <td>
+                                    {% if product.scent %}
+                                        <span class="badge bg-secondary">{{ product.scent|replace({'-': ' '})|title }}</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td><span class="badge bg-danger fs-6">{{ product.quantity }}</span></td>
+                                <td>{{ product.alertThreshold }}</td>
+                                <td>{{ product.category.name }}</td>
+                                {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER') or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                                    <td>
+                                        {# Ici tu feras une page ou un formulaire qui ajoute du stock seulement #}
+                                        <a href="{{ path('product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">
+                                            📦 Réapprovisionner
+                                        </a>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-success">✅ Aucun produit en alerte !</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        {# Statistiques par catégorie #}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4>📂 Stock par Catégorie</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Catégorie</th>
+                                <th>Produits</th>
+                                <th>Stock Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in statsByCategory %}
+                            <tr>
+                                <td><strong>{{ stat.name }}</strong></td>
+                                <td>{{ stat.productCount }}</td>
+                                <td>{{ stat.totalStock }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {# Statistiques par fournisseur #}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h4>🏭 Stock par Fournisseur</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fournisseur</th>
+                                <th>Produits</th>
+                                <th>Stock Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in statsBySupplier %}
+                            <tr>
+                                <td><strong>{{ stat.supplier }}</strong></td>
+                                <td>{{ stat.productCount }}</td>
+                                <td>{{ stat.totalStock }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Derniers produits ajoutés #}
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h4>🆕 Derniers Produits Ajoutés</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Référence</th>
+                            <th>Nom</th>
+                            <th>Senteur</th>
+                            <th>Quantité</th>
+                            <th>Catégorie</th>
+                            <th>Date d'ajout</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in recentProducts %}
+                        <tr>
+                            <td>
+                                {% if product.image %}
+                                    <img src="{{ asset('images/products/' ~ product.image) }}" 
+                                         alt="{{ product.name }}" 
+                                         class="product-image">
+                                {% else %}
+                                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #D96C80, #BF2A52); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.9rem;">
+                                        {{ product.name|slice(0, 2)|upper }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ product.reference }}</strong></td>
+                            <td>{{ product.name }}</td>
+                            <td>
+                                {% if product.scent %}
+                                    <span class="badge bg-secondary">{{ product.scent|replace({'-': ' '})|title }}</span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ product.quantity }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.addedAt|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

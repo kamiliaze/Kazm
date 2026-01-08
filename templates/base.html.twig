@@ -1,17 +1,88 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion Stock KAZM{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🌸</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    
+    <style>
+    .kazm-back-btn {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        border: none;
+        border-radius: 999px;
+        padding: 10px 22px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #ffffff;
+        background: linear-gradient(135deg, #ffc5d9, #f0e3ff);
+        box-shadow: 0 4px 15px rgba(194, 123, 160, 0.35);
+        transition: all 0.3s ease;
+    }
+    .kazm-back-btn:hover {
+        transform: translateX(-50%) translateY(-2px);
+        box-shadow: 0 6px 20px rgba(194, 123, 160, 0.5);
+        background: linear-gradient(135deg, #f0e3ff, #ffc5d9);
+    }
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    #theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: linear-gradient(135deg, #ffc5d9, #f0e3ff);
+        box-shadow: 0 4px 12px rgba(194, 123, 160, 0.35);
+        cursor: pointer;
+    }
+</style>
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    {# Bouton Retour Dashboard visible sur toutes les pages #}
+    <a href="{{ path('app_dashboard') }}" class="kazm-back-btn">
+        ⬅ Dashboard
+    </a>
+
+    <button id="theme-toggle">🌙</button>
+
+    {% block body %}{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const body = document.body;
+      const toggle = document.getElementById('theme-toggle');
+
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') body.classList.add('dark');
+
+      toggle.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        localStorage.setItem(
+          'theme',
+          body.classList.contains('dark') ? 'dark' : 'light'
+        );
+      });
+    </script>
+
+    {% block javascripts %}{% endblock %}
+</body>
 </html>

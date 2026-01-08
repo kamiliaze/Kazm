@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Produits{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">🌸 Collection KAZM</h1>
+        <div>
+            {# Bouton Nouveau produit : à partir de SENIOR #}
+            {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER') 
+                  or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('product_new') }}" class="btn btn-success">
+                    ➕ Nouveau Produit
+                </a>
+            {% endif %}
+            <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">← Dashboard</a>
+        </div>
+    </div>
+
+    {# Messages flash d'erreur #}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 15px; border-left: 5px solid #FF69B4;">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+    
+    {# Messages flash de succès #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 15px; border-left: 5px solid #FFDAB9;">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    {% if products|length > 0 %}
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="{{ path('product_show', {'id': product.id}) }}" style="text-decoration: none; color: inherit;">
+                {% if product.image %}
+                    <img src="{{ asset('images/products/' ~ product.image) }}" 
+                         alt="{{ product.name }}" 
+                         class="product-card-image">
+                {% else %}
+                    <div class="product-card-image-placeholder">
+                        {{ product.name|slice(0, 2)|upper }}
+                    </div>
+                {% endif %}
+                
+                <div class="product-card-ref">{{ product.reference }}</div>
+                
+                <h3 class="product-card-title">{{ product.name }}</h3>
+                
+                {% if product.scent %}
+                    <div class="product-card-scent">
+                        {{ product.scent|replace({'-': ' '})|title }}
+                    </div>
+                {% endif %}
+                
+                <div class="product-card-quantity">
+                    {% if product.quantity <= product.alertThreshold %}
+                        <span class="product-card-alert">⚠️ {{ product.quantity }} unités</span>
+                    {% else %}
+                        {{ product.quantity }} unités
+                    {% endif %}
+                </div>
+                
+                {% if product.category %}
+                    <div class="badge bg-secondary mb-2">
+                        {{ product.category.name }}
+                    </div>
+                {% endif %}
+            </a>
+            
+            <div class="product-card-actions">
+                {# Tout le monde peut voir #}
+                <a href="{{ path('product_show', {'id': product.id}) }}" 
+                   class="btn btn-sm btn-info">
+                    👁️ Voir
+                </a>
+
+                {# Modifier / réapprovisionner : à partir de SENIOR #}
+                {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER') 
+                      or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('product_edit', {'id': product.id}) }}" 
+                       class="btn btn-sm btn-warning">
+                        ✏️ Modifier
+                    </a>
+                {% endif %}
+                {# Pas de bouton supprimer ici → donc Senior ne peut pas supprimer #}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <h4>🌸 Aucun produit enregistré</h4>
+        <p>Commencez par ajouter votre premier produit !</p>
+        {% if is_granted('ROLE_SENIOR') or is_granted('ROLE_MANAGER') 
+              or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('product_new') }}" class="btn btn-success">➕ Ajouter un produit</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

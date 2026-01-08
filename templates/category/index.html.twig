@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des catégories{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📂 Liste des catégories</h1>
+
+        {# Ajouter : seulement ADMIN / DIRECTEUR #}
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_DIRECTEUR') %}
+            <a href="{{ path('category_new') }}" class="btn btn-success">
+                ➕ Ajouter une catégorie
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Emplacement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>{{ category.location }}</td>
+                        <td>
+                            {# Modifier : à partir de MANAGER/SENIOR #}
+                            {% if is_granted('ROLE_MANAGER') or is_granted('ROLE_SENIOR')
+                                   or is_granted('ROLE_DIRECTEUR') or is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('category_edit', {id: category.id}) }}"
+                                   class="btn btn-sm btn-warning">
+                                    ✏️ Modifier
+                                </a>
+                            {% endif %}
+
+                            {# Supprimer : uniquement ADMIN / DIRECTEUR #}
+                            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_DIRECTEUR') %}
+                                <form method="post"
+                                      action="{{ path('category_delete', {id: category.id}) }}"
+                                      style="display:inline-block"
+                                      onsubmit="return confirm('Supprimer cette catégorie ?');">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('delete' ~ category.id) }}">
+                                    <button class="btn btn-sm btn-danger">
+                                        🗑 Supprimer
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            Aucune catégorie pour le moment.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

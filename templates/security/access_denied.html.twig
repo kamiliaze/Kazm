@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accès Refusé{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center" style="border: 2px solid #FFB6C1; border-radius: 20px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #FFB6C1, #FFD1DC); color: white;">
+                    <h3>🔒 Accès Refusé</h3>
+                </div>
+                <div class="card-body p-5">
+                    <div style="font-size: 5rem; color: #FFB6C1; margin-bottom: 20px;">
+                        🚫
+                    </div>
+                    <h4 style="color: #FFB6C1; margin-bottom: 20px;">{{ message }}</h4>
+                    <p style="color: #8B7B8B; font-size: 1.1rem; margin-bottom: 30px;">
+                        Vous n'avez pas les permissions nécessaires pour effectuer cette action.
+                        <br>Contactez un administrateur si vous pensez qu'il s'agit d'une erreur.
+                    </p>
+                    <div>
+                        <a href="{{ back_url }}" class="btn btn-primary" style="margin-right: 10px;">
+                            ← Retour
+                        </a>
+                        <a href="{{ path('app_dashboard') }}" class="btn btn-secondary">
+                            🏠 Tableau de bord
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

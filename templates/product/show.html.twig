@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">{{ product.name }}</h1>
+        <div>
+            <a href="{{ path('product_edit', {'id': product.id}) }}" class="btn btn-warning">✏️ Modifier</a>
+            <a href="{{ path('product_index') }}" class="btn btn-secondary">← Retour</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card" style="border-radius: 15px;">
+                {% if product.image %}
+                    <img src="{{ asset('images/products/' ~ product.image) }}" 
+                         alt="{{ product.name }}" 
+                         class="card-img-top"
+                         style="height: 400px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                {% else %}
+                    <div style="height: 400px; background: linear-gradient(135deg, #FF69B4, #FFB6C1); display: flex; align-items: center; justify-content: center; border-radius: 15px 15px 0 0;">
+                        <span style="font-size: 5rem; font-weight: bold; color: white; opacity: 0.5;">{{ product.name|slice(0, 2)|upper }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card" style="border-radius: 15px; border-left: 5px solid #FF69B4;">
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 35%;">Référence :</th>
+                            <td><strong>{{ product.reference }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Quantité actuelle :</th>
+                            <td>
+                                {% if product.quantity <= product.alertThreshold %}
+                                    <span class="badge bg-danger">⚠️ {{ product.quantity }} unités</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ product.quantity }} unités</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Seuil d'alerte :</th>
+                            <td>{{ product.alertThreshold }} unités</td>
+                        </tr>
+                        {% if product.category %}
+                        <tr>
+                            <th>Catégorie :</th>
+                            <td><span class="badge bg-secondary">{{ product.category.name }}</span></td>
+                        </tr>
+                        {% endif %}
+                        {% if product.scent %}
+                        <tr>
+                            <th>Senteur :</th>
+                            <td>{{ product.scent|replace({'-': ' '})|title }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <th>Fournisseur :</th>
+                            <td>{{ product.supplier }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date d'ajout :</th>
+                            <td>{{ product.addedAt|date('d/m/Y H:i') }}</td>
+                        </tr>
+                        {% if product.entryDate %}
+                        <tr>
+                            <th>Date d'entrée :</th>
+                            <td>{{ product.entryDate|date('d/m/Y') }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+
+                    <div class="mt-4">
+                        <a href="{{ path('product_edit', {'id': product.id}) }}" class="btn btn-warning">✏️ Modifier</a>
+                        <form method="post" action="{{ path('product_delete', {'id': product.id}) }}" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">🗑️ Supprimer</button>
+                        </form>
+                        <a href="{{ path('product_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

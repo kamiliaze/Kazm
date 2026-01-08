@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAZM STOCK - Gestion de Stock Moderne</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+    <!-- Bannière promotionnelle -->
+    <div class="banner">
+        🎉 Bienvenue sur KAZM STOCK - Gérez votre inventaire avec style
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">kazm.</div>
+        <ul class="nav-menu">
+            <li><a href="{{ path('product_index') }}">PRODUITS</a></li>
+            <li><a href="#">PERSONNEL</a></li>
+            <li><a href="#">CATÉGORIES</a></li>
+            <li><a href="#">RAPPORTS</a></li>
+        </ul>
+        <div class="nav-actions">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <a href="{{ path('app_logout') }}" class="btn-primary">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn-primary">Connexion</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Info bar -->
+    <div class="info-bar">
+        <div class="info-item">
+            <span class="info-icon">📦</span>
+            <span>Gestion simplifiée</span>
+        </div>
+        <div class="info-item">
+            <span class="info-icon">💳</span>
+            <span>Suivi en temps réel</span>
+        </div>
+        <div class="info-item">
+            <span class="info-icon">🚚</span>
+            <span>Inventaire complet</span>
+        </div>
+    </div>
+
+    <!-- Section Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Gestion de Stock<br>Moderne & Élégante</h1>
+            <p class="hero-subtitle">+ Interface intuitive</p>
+
+            <div class="hero-cards">
+                <div class="hero-card">
+                    <span class="hero-card-badge">NOUVEAU</span>
+                    <div class="hero-card-icon">📊</div>
+                    <h3>Tableau de bord</h3>
+                </div>
+                <div class="hero-card">
+                    <span class="hero-card-badge">POPULAIRE</span>
+                    <div class="hero-card-icon">📦</div>
+                    <h3>Gestion produits</h3>
+                </div>
+                <div class="hero-card">
+                    <span class="hero-card-badge">RAPIDE</span>
+                    <div class="hero-card-icon">👥</div>
+                    <h3>Gestion équipe</h3>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=500" alt="Stock Management">
+        </div>
+    </section>
+
+    <!-- Section catégories -->
+    <section class="categories-section">
+        <!-- Menu latéral -->
+        <aside class="sidebar">
+            <a href="{{ path('product_index') }}" class="category-item">
+                <span class="category-icon">📦</span>
+                <span class="category-name">Tous les produits</span>
+            </a>
+            <a href="#" class="category-item">
+                <span class="category-icon">📊</span>
+                <span class="category-name">Statistiques</span>
+            </a>
+            <a href="#" class="category-item">
+                <span class="category-icon">🏷️</span>
+                <span class="category-name">Catégories</span>
+            </a>
+            <a href="#" class="category-item">
+                <span class="category-icon">⚠️</span>
+                <span class="category-name">Alertes de stock</span>
+            </a>
+            <a href="#" class="category-item">
+                <span class="category-icon">👥</span>
+                <span class="category-name">Équipe & Personnel</span>
+            </a>
+            <a href="#" class="category-item">
+                <span class="category-icon">📋</span>
+                <span class="category-name">Rapports</span>
+            </a>
+        </aside>
+
+        <!-- Grille de produits -->
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image" style="background: linear-gradient(135deg, #ffd6e0 0%, #ffa6c1 100%);"></div>
+                <p class="product-name">GESTION</p>
+                <h3 class="product-title">Produits</h3>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image" style="background: linear-gradient(135deg, #fff4d6 0%, #ffd89b 100%);"></div>
+                <p class="product-name">ÉQUIPE</p>
+                <h3 class="product-title">Personnel</h3>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Kazm Stock{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow" style="border-radius: 20px; border: 2px solid #FFB6C1;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #FFB6C1, #FFD1DC); color: white; border-radius: 18px 18px 0 0;">
+                    <h3>🔐 Connexion - Kazm Stock</h3>
+                </div>
+                <div class="card-body p-4">
+                    {% if error %}
+                        <div class="alert alert-danger" style="border-radius: 15px;">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="alert alert-info">
+                            Vous êtes connecté en tant que {{ app.user.userIdentifier }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="inputEmail" class="form-label" style="color: #FFB6C1; font-weight: 600;">📧 Email</label>
+                            <input type="email" 
+                                   value="{{ last_username }}" 
+                                   name="_username" 
+                                   id="inputEmail" 
+                                   class="form-control" 
+                                   style="border-radius: 12px; border: 2px solid rgba(255, 182, 193, 0.3);"
+                                   autocomplete="email" 
+                                   required 
+                                   autofocus
+                                   placeholder="votre-email@exemple.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="inputPassword" class="form-label" style="color: #FFB6C1; font-weight: 600;">🔒 Mot de passe</label>
+                            <input type="password" 
+                                   name="_password" 
+                                   id="inputPassword" 
+                                   class="form-control" 
+                                   style="border-radius: 12px; border: 2px solid rgba(255, 182, 193, 0.3);"
+                                   autocomplete="current-password" 
+                                   required
+                                   placeholder="••••••••">
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="_remember_me" id="remember_me">
+                            <label class="form-check-label" for="remember_me" style="color: #8B7B8B;">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                        <div class="d-grid">
+                            <button class="btn btn-lg" type="submit" style="background: linear-gradient(135deg, #FFB6C1, #FFD1DC); color: white; border: none; border-radius: 12px; font-weight: 600;">
+                                ✨ Se connecter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center" style="background: #FFF9F9; border-radius: 0 0 18px 18px;">
+                    <small style="color: #8B7B8B;">🌸 Kazm Stock Management System</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
